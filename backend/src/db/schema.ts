@@ -59,6 +59,23 @@ export const usersRelations = relations(users, ({ many }) => ({
 //                   `one()` means one product can have one related records
 export const productsRelations = relations(products, ({ one, many }) => ({
     comments: many(comments),
-        user: one(users. {fields:[products.userId], reference: [users.id]}),
+    // `field` = the foreign key column in THIS table
+    // `references` = the primary key column in the RELATED table
+    user: one(users, { fields: [products.userId], references: [users.id] }),
+}));
 
+// Comment Relations: A comment belong to one product and one user
+export const commentsRelations = relations(comments, ({ one }) => ({
+    users: one(users, { fields: [comments.userId], references: [users.id] }), 
+    products: one(products, { fields: [comments.userId], references: [products.id] })
 }))
+
+// Type inference -> exporting object types so other files can use 
+export type User = typeof users.$inferSelect;
+export type newUser = typeof users.$inferInsert;
+
+export type Product = typeof products.$inferSelect;
+export type newProduct = typeof products.$inferInsert;
+
+export type Comment = typeof comments.$inferSelect;
+export type newComment = typeof comments.$inferInsert;
